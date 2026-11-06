@@ -422,7 +422,7 @@ footer nav a:hover{background:none;color:#fff;box-shadow:none}
       <div class="glass contact rv">
         <form class="form" id="inq" novalidate>
           <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off">
-          <div class="field"><label for="f1">골프장명 <i>*</i></label><input id="f1" name="골프장명" required></div>
+          <div class="field"><label for="f1">회사명<i>*</i></label><input id="f1" name="회사명" required></div>
           <div class="field"><label for="f2">담당자 <i>*</i></label><input id="f2" name="담당자" required></div>
           <div class="field"><label for="f3">직책</label><input id="f3" name="직책"></div>
           <div class="field"><label for="f4">연락처 <i>*</i></label><input id="f4" name="연락처" type="tel" placeholder="010-0000-0000" required></div>
@@ -491,8 +491,11 @@ links.forEach(a=>a.addEventListener('click',()=>document.getElementById('gnb').c
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 
-/* inquiry form -> email via FormSubmit (수신 주소는 화면에 표시되지 않음)
+/* 고객문의 메일 전송 (수신 주소는 화면에 표시되지 않음)
+   WEB3FORMS_KEY: https://web3forms.com 에서 받은 Access Key를 넣으면 Web3Forms로 전송합니다(권장).
+   비워 두면 FormSubmit으로 전송합니다.
    FORM_ALIAS: FormSubmit 활성화 후 받은 별칭 ID를 넣으면 아래 암호화 주소 대신 사용됩니다. */
+const WEB3FORMS_KEY='98d7b49b-7665-4f86-b6ba-2cb53b973640';
 const FORM_ALIAS='';
 const FORM_ENDPOINT='https://formsubmit.co/ajax/'+(FORM_ALIAS||((k,d)=>String.fromCharCode(...d.map((c,i)=>c^k.charCodeAt(i%k.length))))
   ('MJIS-golf',[38,57,33,96,29,87,95,91,38,42,39,40,58,65,73,12,3,11]));
@@ -503,15 +506,32 @@ form.addEventListener('submit',async ev=>{
   if(bad){msg.textContent=`'${bad.previousElementSibling.textContent.replace('*','').trim()}' 항목을 올바르게 입력해 주세요.`;msg.classList.add('err');bad.focus();return}
   if(!document.getElementById('agree').checked){msg.textContent='개인정보 수집·이용에 동의해 주세요.';msg.classList.add('err');return}
   const data=Object.fromEntries(new FormData(form));
-  data._subject=`[홈페이지 문의] ${data['골프장명']} - ${data['담당자']}`;
-  data._template='table';data._captcha='false';data._replyto=data.EMAIL;
+  if(data._honey)return; /* 스팸 봇 */
+  delete data._honey;
+  const subject=`[홈페이지 문의] ${data['골프장명']} - ${data['담당자']}`;
+  let url=FORM_ENDPOINT;
+  if(WEB3FORMS_KEY){
+    url='https://api.web3forms.com/submit';
+    Object.assign(data,{access_key:WEB3FORMS_KEY,subject,from_name:'MJIS 홈페이지',replyto:data.EMAIL});
+  }else{
+    Object.assign(data,{_subject:subject,_template:'table',_captcha:'false',_replyto:data.EMAIL});
+  }
   btn.disabled=true;btn.textContent='전송 중...';
   try{
-    const r=await fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)});
+    const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),20000);
+    const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data),signal:ctl.signal});
+    clearTimeout(to);
     const j=await r.json().catch(()=>({}));
-    if(!r.ok||j.success==='false'||j.success===false)throw new Error(j.message||'fail');
+    if(/activat/i.test(j.message||'')){msg.textContent='메일 수신 활성화가 필요합니다. 관리자 메일함의 활성화 메일을 확인한 뒤 다시 보내 주세요.';msg.classList.add('err');return}
+    if(!r.ok||j.success==='false'||j.success===false)throw new Error(j.message||('HTTP '+r.status));
     msg.textContent='문의가 정상적으로 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.';msg.classList.add('ok');form.reset();
-  }catch(e){msg.textContent='전송에 실패했습니다. 잠시 후 다시 시도해 주세요.';msg.classList.add('err')}
+  }catch(e){
+    console.error('문의 전송 실패:',e);
+    msg.textContent=location.protocol==='file:'
+      ?'PC에서 파일로 열면 전송되지 않습니다. 인터넷 주소(홈페이지)에서 다시 시도해 주세요.'
+      :'전송에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+    msg.classList.add('err');
+  }
   finally{btn.disabled=false;btn.textContent='문의 보내기'}
 });
 </script>
