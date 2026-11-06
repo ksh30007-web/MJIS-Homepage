@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>명진정보시스템 | MJIS Co., Ltd.</title>
+<meta name="description" content="명진정보시스템(MJIS) - 골프장 ERP, 키오스크, 홈페이지·앱, ARS, CTI 솔루션">
+<link rel="icon" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#0b56a8; --blue-d:#073c78; --green:#8cc63f; --green-d:#5e9a1e;
+  --ink:#1b2a3a; --muted:#5b6b7c; --line:rgba(255,255,255,.65);
+  --glass:rgba(255,255,255,.42); --glass-strong:rgba(255,255,255,.62);
+  --shadow:0 10px 30px rgba(11,60,120,.12);
+  --radius:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);line-height:1.65;
+  background:#eef4f8;overflow-x:hidden}
+/* soft background orbs so glass has something to blur */
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;
+  background:linear-gradient(160deg,#f4f8fb 0%,#e6f0f7 45%,#eef6e6 100%)}
+.bg span{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55}
+.bg .o1{width:520px;height:520px;background:#7fb2e8;top:-120px;left:-120px}
+.bg .o2{width:460px;height:460px;background:#b9e07a;top:35%;right:-140px}
+.bg .o3{width:420px;height:420px;background:#9cc7f0;bottom:-160px;left:25%}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* glass */
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:var(--radius);
+  backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);
+  box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.8)}
+
+/* header */
+header{position:fixed;top:0;left:0;right:0;z-index:50;transition:.3s}
+header .bar{display:flex;align-items:center;justify-content:space-between;height:72px}
+header.scrolled{background:rgba(255,255,255,.7);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 2px 20px rgba(0,0,0,.06)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{height:50px;width:auto}
+.brand b{display:block;font-size:19px;font-weight:900;color:var(--blue);letter-spacing:-.5px;line-height:1.2}
+.brand small{display:block;font-size:11.5px;color:var(--green-d);font-weight:700;letter-spacing:.5px}
+nav ul{display:flex;gap:6px;list-style:none}
+nav a{display:block;padding:8px 16px;border-radius:999px;font-weight:500;font-size:15px;color:var(--ink);transition:.2s}
+nav a:hover,nav a.on{background:var(--glass-strong);color:var(--blue);box-shadow:inset 0 0 0 1px var(--line)}
+.menu-btn{display:none;background:none;border:0;font-size:26px;color:var(--blue);cursor:pointer}
+
+/* hero */
+.hero{padding:150px 0 90px}
+.hero .wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+.eyebrow{display:inline-block;padding:6px 14px;border-radius:999px;font-size:13px;font-weight:700;
+  color:var(--green-d);background:rgba(140,198,63,.15);border:1px solid rgba(140,198,63,.35);margin-bottom:18px}
+.hero h1{font-size:clamp(32px,4.6vw,52px);font-weight:900;line-height:1.25;letter-spacing:-1.5px}
+.hero h1 em{font-style:normal;color:var(--blue)}
+.hero h1 .g{color:var(--green-d)}
+.hero h1 em,.hero h1 .g{white-space:nowrap}
+.hero p{margin-top:18px;font-size:17px;color:var(--muted);max-width:560px}
+.btns{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+.btn{display:inline-block;padding:13px 26px;border-radius:999px;font-weight:700;font-size:15px;transition:.2s;border:0;cursor:pointer;font-family:inherit}
+.btn.pri{background:linear-gradient(135deg,var(--blue),#1a73d1);color:#fff;box-shadow:0 8px 20px rgba(11,86,168,.3)}
+.btn.pri:hover{transform:translateY(-2px)}
+.btn.sec{background:var(--glass-strong);color:var(--blue);border:1px solid var(--line)}
+.hero-logo{padding:40px;display:flex;justify-content:center}
+.hero-logo img{max-height:320px;width:auto}
+
+/* section heading (reference style: breadcrumb + title underline) */
+section{padding:90px 0}
+.sec-head{text-align:center;margin-bottom:48px}
+.crumb{font-size:13px;color:var(--muted);margin-bottom:10px}
+.crumb b{color:var(--blue)}
+.sec-head h2{font-size:clamp(26px,3vw,36px);font-weight:900;letter-spacing:-1px;display:inline-block;position:relative;padding-bottom:14px}
+.sec-head h2:after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:48px;height:4px;border-radius:4px;
+  background:linear-gradient(90deg,var(--blue),var(--green))}
+.sec-head p{margin-top:14px;color:var(--muted)}
+
+/* company */
+.company{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.company .glass{padding:36px}
+.company h3{font-size:22px;font-weight:700;margin-bottom:14px;color:var(--blue-d)}
+.company p{color:var(--muted);margin-bottom:10px}
+.info{width:100%;border-collapse:collapse}
+.info th,.info td{text-align:left;padding:14px 6px;border-bottom:1px solid rgba(11,86,168,.1);font-size:15px}
+.info th{width:110px;color:var(--blue);font-weight:700}
+.info tr:last-child th,.info tr:last-child td{border-bottom:0}
+
+/* product cards */
+.grid{display:grid;gap:22px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g5{grid-template-columns:repeat(5,1fr)}
+.card{padding:30px 26px;transition:.25s}
+.card:hover{transform:translateY(-6px);background:var(--glass-strong)}
+.ico{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;margin-bottom:18px;
+  background:linear-gradient(135deg,rgba(11,86,168,.9),rgba(26,115,209,.8));color:#fff;
+  box-shadow:0 8px 18px rgba(11,86,168,.25)}
+.ico.gr{background:linear-gradient(135deg,rgba(94,154,30,.9),rgba(140,198,63,.85));box-shadow:0 8px 18px rgba(94,154,30,.25)}
+.ico svg{width:28px;height:28px}
+.card h3{font-size:19px;font-weight:700;margin-bottom:6px}
+.card h3 small{font-size:14px;color:var(--green-d);font-weight:700;margin-left:4px}
+.card p{font-size:14.5px;color:var(--muted)}
+
+/* ERP tiles */
+.tile{padding:26px 14px;text-align:center;transition:.25s}
+.tile:hover{transform:translateY(-5px);background:var(--glass-strong)}
+.tile .num{font-size:12px;font-weight:700;color:var(--green-d);letter-spacing:1px}
+.tile .ico{margin:10px auto 12px;width:50px;height:50px;border-radius:14px}
+.tile .ico svg{width:24px;height:24px}
+.tile h4{font-size:16.5px;font-weight:700}
+
+/* kiosk */
+.kiosk-sec .wrap{display:grid;grid-template-columns:auto 1fr;gap:60px;align-items:center}
+.kiosk{width:340px;margin:0 auto;position:relative}
+.k-head{height:64px;border-radius:26px 26px 6px 6px;background:linear-gradient(180deg,#fdfdfd,#e4e8ec);
+  border:1px solid #d3d9df;position:relative;box-shadow:0 6px 16px rgba(0,0,0,.08)}
+.k-cam{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:16px;height:16px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#5b7fa6,#0c1a2a 60%);box-shadow:0 0 0 4px #cfd6dd}
+.k-print{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:120px;height:6px;border-radius:4px;background:#2b3138}
+.k-body{background:linear-gradient(180deg,#f7f9fa,#e2e7eb);border:1px solid #d3d9df;border-top:0;padding:12px 12px 16px;
+  border-radius:0 0 18px 18px;box-shadow:0 18px 40px rgba(0,0,0,.15)}
+.k-screen{aspect-ratio:9/16;border-radius:10px;overflow:hidden;position:relative;
+  background:linear-gradient(165deg,#0b3e7a 0%,#14629f 45%,#3f8d3a 100%);border:6px solid #111;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.k-screen:before{content:"";position:absolute;inset:0;background:
+  radial-gradient(circle at 80% 15%,rgba(140,198,63,.45),transparent 40%),
+  radial-gradient(circle at 10% 70%,rgba(127,178,232,.4),transparent 45%)}
+.k-screen:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.14) 0%,transparent 35%);pointer-events:none}
+.scr{position:relative;z-index:1;height:100%;padding:16px 14px;display:flex;flex-direction:column;color:#fff}
+.scr-top{display:flex;justify-content:space-between;align-items:center;font-size:10px;opacity:.85;margin-bottom:10px}
+.scr-top b{font-size:12px;font-weight:900;letter-spacing:.5px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.tabs button{font-family:inherit;padding:9px 0;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;color:#fff;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);transition:.2s}
+.tabs button.on{background:rgba(255,255,255,.92);color:var(--blue-d)}
+.panel{display:none;flex-direction:column;gap:7px;flex:1}
+.panel.on{display:flex;animation:fade .35s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.panel h5{font-size:15px;font-weight:900;margin:2px 0 4px}
+.kbtn{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:14px;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.kbtn i{font-style:normal;flex:0 0 22px;height:22px;border-radius:7px;display:grid;place-items:center;font-size:11px;font-weight:900;
+  background:rgba(140,198,63,.9);color:#10300a}
+.kbtn span{font-size:12.5px;font-weight:500;line-height:1.3}
+.kbtn span small{display:block;font-size:10px;opacity:.75}
+.scr-foot{margin-top:auto;text-align:center;font-size:9.5px;opacity:.7;padding-top:8px}
+.k-mid{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:0 6px}
+.k-card{width:70px;height:28px;border-radius:6px;background:#2b3138;position:relative}
+.k-card:after{content:"";position:absolute;left:10px;right:10px;top:12px;height:3px;background:#0f1418;border-radius:2px}
+.k-nfc{width:44px;height:28px;border-radius:6px;background:linear-gradient(135deg,#cfe8a8,#8cc63f);display:grid;place-items:center;font-size:9px;font-weight:900;color:#26420c}
+.k-scan{width:60px;height:28px;border-radius:6px;background:#2b3138;box-shadow:inset 0 0 0 3px #3e4650}
+.k-pole{width:150px;height:110px;margin:0 auto;background:linear-gradient(90deg,#dfe4e8,#f8fafb 50%,#dfe4e8);border-left:1px solid #d3d9df;border-right:1px solid #d3d9df}
+.k-base{width:240px;height:14px;margin:0 auto;border-radius:6px;background:linear-gradient(180deg,#eef1f3,#c8cfd5);box-shadow:0 14px 24px rgba(0,0,0,.18)}
+.k-desc h3{font-size:28px;font-weight:900;letter-spacing:-.8px;margin-bottom:12px}
+.k-desc>p{color:var(--muted);margin-bottom:26px}
+.flow{display:grid;gap:18px}
+.flow .glass{padding:24px 26px}
+.flow h4{font-size:18px;font-weight:700;color:var(--blue-d);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.flow h4 em{font-style:normal;font-size:12px;padding:3px 10px;border-radius:999px;background:var(--blue);color:#fff}
+.flow h4 em.gr{background:var(--green-d)}
+.flow ol{padding-left:20px;color:var(--ink);font-size:15px}
+.flow li{padding:3px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chips span{font-size:13px;padding:6px 12px;border-radius:999px;background:var(--glass-strong);border:1px solid var(--line);color:var(--blue-d);font-weight:500}
+
+/* contact */
+.contact{max-width:860px;margin:0 auto;padding:44px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.field label{font-size:14px;font-weight:700;color:var(--blue-d)}
+.field label i{color:#e0503a;font-style:normal}
+.field input,.field textarea{font-family:inherit;font-size:15px;padding:13px 16px;border-radius:14px;color:var(--ink);
+  background:rgba(255,255,255,.6);border:1px solid rgba(11,86,168,.15);outline:none;transition:.2s}
+.field input:focus,.field textarea:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(11,86,168,.1)}
+.field textarea{min-height:160px;resize:vertical}
+.agree{grid-column:1/-1;font-size:13.5px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.submit{grid-column:1/-1;text-align:center;margin-top:6px}
+.submit .btn{min-width:220px;font-size:16px;padding:15px 30px}
+.btn:disabled{opacity:.6;cursor:wait;transform:none}
+.msg{grid-column:1/-1;text-align:center;font-weight:500;min-height:1.5em}
+.msg.ok{color:var(--green-d)} .msg.err{color:#d0402f}
+.hp{position:absolute;left:-9999px}
+
+/* footer */
+footer{padding:40px 0;margin-top:30px;background:rgba(7,40,80,.92);color:#c9d6e4;font-size:13.5px}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer .fbrand{display:flex;align-items:center;gap:14px}
+footer .fbrand img{height:54px;background:#fff;border-radius:10px;padding:5px}
+footer b{color:#fff;font-size:16px}
+footer nav a{color:#c9d6e4;padding:4px 10px;font-size:13.5px}
+footer nav a:hover{background:none;color:#fff;box-shadow:none}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:.7s ease}
+.rv.in{opacity:1;transform:none}
+
+@media (max-width:1000px){
+  .g5{grid-template-columns:repeat(3,1fr)}
+  .g3{grid-template-columns:repeat(2,1fr)}
+  .kiosk-sec .wrap{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .menu-btn{display:block}
+  header nav{position:absolute;top:72px;left:16px;right:16px;display:none}
+  header nav.open{display:block}
+  header nav ul{flex-direction:column;padding:10px;background:rgba(255,255,255,.92);border-radius:18px;box-shadow:var(--shadow)}
+  .hero{padding:120px 0 60px}
+  .hero .wrap,.company{grid-template-columns:1fr}
+  .hero-logo{order:-1;padding:24px}
+  .hero-logo img{max-height:180px}
+  .g3,.g5{grid-template-columns:repeat(2,1fr)}
+  .form{grid-template-columns:1fr}
+  .contact{padding:28px 20px}
+  .wrap{padding:0 16px}
+  section{padding:64px 0}
+  .kiosk{width:300px}
+  .brand b{font-size:17px}
+}
+@media (max-width:420px){ .g3{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="bg"><span class="o1"></span><span class="o2"></span><span class="o3"></span></div>
+
+<header id="hd">
+  <div class="wrap bar">
+    <a href="#top" class="brand">
+      <img src="images/logo.png" alt="MJIS 로고">
+      <span><b>명진정보시스템</b><small>MJIS Co., Ltd.</small></span>
+    </a>
+    <button class="menu-btn" aria-label="메뉴" onclick="document.getElementById('gnb').classList.toggle('open')">☰</button>
+    <nav id="gnb">
+      <ul>
+        <li><a href="#company">회사소개</a></li>
+        <li><a href="#products">주요품목</a></li>
+        <li><a href="#erp">골프장 ERP</a></li>
+        <li><a href="#kiosk">키오스크</a></li>
+        <li><a href="#contact">고객문의</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="wrap">
+      <div class="rv">
+        <span class="eyebrow">GREEN IT SOLUTION</span>
+        <h1>골프장 운영의 모든 순간을<br><em>하나의 시스템</em>으로, <span class="g">더 스마트하게</span></h1>
+        <p>명진정보시스템은 회원·예약·체크인부터 정산과 영업마감까지, 골프장 운영 전 과정을 아우르는 ERP와 무인 키오스크 솔루션을 제공합니다.</p>
+        <div class="btns">
+          <a href="#products" class="btn pri">주요품목 보기</a>
+          <a href="#contact" class="btn sec">도입 문의하기</a>
+        </div>
+      </div>
+      <div class="glass hero-logo rv"><img src="images/logo.png" alt="MJIS Green IT Solution"></div>
+    </div>
+  </div>
+
+  <!-- COMPANY -->
+  <section id="company">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="crumb">HOME / <b>회사소개</b></div>
+        <h2>회사소개</h2>
+      </div>
+      <div class="company">
+        <div class="glass rv">
+          <h3>골프장 IT, 한곳에서 해결합니다</h3>
+          <p>명진정보시스템(MJIS)은 골프장 현장의 업무 흐름을 깊이 이해하고 설계한 골프장 전문 IT 솔루션 기업입니다.</p>
+          <p>설치형(CS)과 클라우드형 ERP, 얼굴인식 무인 키오스크, 홈페이지·모바일 앱, ARS 및 CTI까지 골프장 운영에 필요한 시스템을 통합 공급하여 운영 효율과 고객 만족을 함께 높입니다.</p>
+        </div>
+        <div class="glass rv">
+          <table class="info">
+            <tr><th>회사명</th><td>명진정보시스템</td></tr>
+            <tr><th>영문명</th><td>MJIS Co., Ltd.</td></tr>
+            <tr><th>슬로건</th><td>Green IT Solution</td></tr>
+            <tr><th>사업분야</th><td>골프장 ERP · 키오스크 · 홈페이지/APP · ARS · CTI</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="crumb">HOME / <b>주요품목</b></div>
+        <h2>주요품목</h2>
+        <p>골프장 운영에 필요한 핵심 솔루션을 제공합니다</p>
+      </div>
+      <div class="grid g3">
+        <div class="glass card rv">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
+          <h3>골프장 ERP시스템<small>(CS)</small></h3>
+          <p>안정적인 설치형 클라이언트-서버 방식의 골프장 통합 운영 시스템</p>
+        </div>
+        <div class="glass card rv">
+          <div class="ico gr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 18a5 5 0 0 1-.6-9.96A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9H7z"/></svg></div>
+          <h3>골프장 ERP시스템<small>(클라우드)</small></h3>
+          <p>서버 구축 부담 없이 언제 어디서나 접속하는 클라우드 기반 ERP</p>
+        </div>
+        <div class="glass card rv">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
+          <h3>홈페이지<small>(APP.)</small></h3>
+          <p>온라인 예약과 연동되는 골프장 홈페이지 및 모바일 앱</p>
+        </div>
+        <div class="glass card rv">
+          <div class="ico gr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="9" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/><path d="M2 6V3h3M22 6V3h-3"/></svg></div>
+          <h3>키오스크시스템</h3>
+          <p>얼굴인식·사전등록 기반 무인 체크인 / 체크아웃 및 정산</p>
+        </div>
+        <div class="glass card rv">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></div>
+          <h3>ARS</h3>
+          <p>전화 자동응답을 통한 예약 확인·안내 서비스</p>
+        </div>
+        <div class="glass card rv">
+          <div class="ico gr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg></div>
+          <h3>Simple CTI</h3>
+          <p>수신 전화와 고객정보를 연동해 빠른 응대를 돕는 CTI</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ERP -->
+  <section id="erp">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="crumb">HOME / <b>골프장 ERP시스템</b></div>
+        <h2>골프장 ERP시스템 주요 항목</h2>
+        <p>운영 전 과정을 하나로 연결하는 통합 모듈</p>
+      </div>
+      <div class="grid g5" id="erpGrid"></div>
+    </div>
+  </section>
+
+  <!-- KIOSK -->
+  <section id="kiosk" class="kiosk-sec">
+    <div class="sec-head rv wrap" style="display:block">
+      <div class="crumb">HOME / <b>키오스크시스템</b></div>
+      <h2>키오스크시스템</h2>
+      <p>얼굴인식 · 사전등록 기반 무인 체크인 / 체크아웃</p>
+    </div>
+    <div class="wrap">
+      <div class="kiosk rv" aria-label="키오스크 화면 예시">
+        <div class="k-head"><span class="k-cam"></span><span class="k-print"></span></div>
+        <div class="k-body">
+          <div class="k-screen">
+            <div class="scr">
+              <div class="scr-top"><b>MJIS GOLF</b><span id="clock">--:--</span></div>
+              <div class="tabs">
+                <button class="on" data-p="pIn">체크인</button>
+                <button data-p="pOut">체크아웃</button>
+              </div>
+              <div class="panel on" id="pIn">
+                <h5>체크인 방법을 선택하세요</h5>
+                <div class="kbtn"><i>1</i><span>예약자 예약번호</span></div>
+                <div class="kbtn"><i>2</i><span>예약자 이름</span></div>
+                <div class="kbtn"><i>3</i><span>사전등록</span></div>
+                <div class="kbtn"><i>4</i><span>얼굴인식 체크인<small>QR 체크인</small></span></div>
+                <div class="kbtn"><i>5</i><span>선불정산<small>조건 선택</small></span></div>
+              </div>
+              <div class="panel" id="pOut">
+                <h5>체크아웃</h5>
+                <div class="kbtn"><i>1</i><span>락카번호 입력<small>또는 얼굴인식</small></span></div>
+                <div class="kbtn"><i>2</i><span>정산조건 선택<small>1/N · 합산 · 분산 가능</small></span></div>
+                <div class="kbtn"><i>3</i><span>카드결제<small>본인 또는 동반자 선택 결제</small></span></div>
+              </div>
+              <div class="scr-foot">화면을 터치해 주세요</div>
+            </div>
+          </div>
+          <div class="k-mid"><span class="k-card" title="카드리더"></span><span class="k-nfc">NFC</span><span class="k-scan" title="QR 스캐너"></span></div>
+        </div>
+        <div class="k-pole"></div>
+        <div class="k-base"></div>
+      </div>
+
+      <div class="k-desc rv">
+        <h3>대기 없는 무인 체크인,<br>간편한 셀프 정산</h3>
+        <p>21.5인치 세로형 터치 키오스크에서 내장객이 직접 체크인부터 정산까지 처리합니다. 프런트 혼잡을 줄이고 인력 운영을 효율화합니다.</p>
+        <div class="flow">
+          <div class="glass">
+            <h4><em>STEP 1</em>체크인</h4>
+            <ol>
+              <li>예약자 예약번호</li>
+              <li>예약자 이름</li>
+              <li>사전등록</li>
+              <li>얼굴인식 체크인, QR체크인</li>
+              <li>선불정산(조건)</li>
+            </ol>
+          </div>
+          <div class="glass">
+            <h4><em class="gr">STEP 2</em>체크아웃</h4>
+            <ol>
+              <li>락카번호 입력, 얼굴인식</li>
+              <li>정산조건 선택 (1/N, 합산, 분산 가능)</li>
+              <li>카드결제 (본인 또는 동반자 선택하여 결제 가능)</li>
+            </ol>
+          </div>
+        </div>
+        <div class="chips"><span>얼굴인식 카메라</span><span>QR·바코드 스캐너</span><span>IC/MS 카드리더</span><span>NFC</span><span>영수증 프린터</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="crumb">HOME / <b>고객문의</b></div>
+        <h2>고객문의</h2>
+        <p>문의를 남겨주시면 담당자가 빠르게 연락드리겠습니다</p>
+      </div>
+      <div class="glass contact rv">
+        <form class="form" id="inq" novalidate>
+          <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off">
+          <div class="field"><label for="f1">골프장명 <i>*</i></label><input id="f1" name="골프장명" required></div>
+          <div class="field"><label for="f2">담당자 <i>*</i></label><input id="f2" name="담당자" required></div>
+          <div class="field"><label for="f3">직책</label><input id="f3" name="직책"></div>
+          <div class="field"><label for="f4">연락처 <i>*</i></label><input id="f4" name="연락처" type="tel" placeholder="010-0000-0000" required></div>
+          <div class="field full"><label for="f5">EMAIL <i>*</i></label><input id="f5" name="EMAIL" type="email" placeholder="example@company.com" required></div>
+          <div class="field full"><label for="f6">문의내용 <i>*</i></label><textarea id="f6" name="문의내용" required></textarea></div>
+          <label class="agree"><input type="checkbox" id="agree"> 문의 응대를 위한 개인정보 수집·이용에 동의합니다.</label>
+          <div class="msg" id="msg" role="status"></div>
+          <div class="submit"><button type="submit" class="btn pri" id="sendBtn">문의 보내기</button></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fbrand">
+      <img src="images/logo.png" alt="MJIS">
+      <div><b>명진정보시스템</b><br>MJIS Co., Ltd. · Green IT Solution</div>
+    </div>
+    <nav><a href="#company">회사소개</a><a href="#products">주요품목</a><a href="#kiosk">키오스크</a><a href="#contact">고객문의</a></nav>
+    <div>© <span id="yr"></span> MJIS Co., Ltd. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+/* ERP tiles */
+const erp=[
+ ['회원','<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c1.8.8 3 2.6 3.5 5.2"/>'],
+ ['예약','<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 14l2.5 2.5L16 12"/>'],
+ ['내장(체크인)','<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/>'],
+ ['판매','<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/>'],
+ ['선.후불정산','<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>'],
+ ['영업마감','<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/>'],
+ ['자재관리','<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>'],
+ ['코스관리','<path d="M5 21V3l11 4-11 4"/><ellipse cx="12" cy="20" rx="8" ry="2"/>'],
+ ['인트라넷','<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>'],
+ ['기타','<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>']
+];
+document.getElementById('erpGrid').innerHTML=erp.map((e,i)=>
+ `<div class="glass tile rv"><div class="num">${String(i+1).padStart(2,'0')}</div>
+  <div class="ico ${i%2?'gr':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${e[1]}</svg></div>
+  <h4>${e[0]}</h4></div>`).join('');
+
+/* kiosk tabs + clock */
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+});
+let auto=setInterval(()=>{const off=document.querySelector('.tabs button:not(.on)');off&&off.click()},5000);
+document.querySelector('.tabs').addEventListener('click',()=>clearInterval(auto));
+const tick=()=>{const d=new Date();document.getElementById('clock').textContent=d.toTimeString().slice(0,5)};tick();setInterval(tick,30000);
+document.getElementById('yr').textContent=new Date().getFullYear();
+
+/* header + nav */
+const hd=document.getElementById('hd');
+const links=[...document.querySelectorAll('#gnb a')];
+window.addEventListener('scroll',()=>{
+  hd.classList.toggle('scrolled',scrollY>20);
+  let cur='';document.querySelectorAll('main section').forEach(s=>{if(scrollY>=s.offsetTop-120)cur=s.id});
+  links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur));
+});
+links.forEach(a=>a.addEventListener('click',()=>document.getElementById('gnb').classList.remove('open')));
+
+/* reveal on scroll */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+/* inquiry form -> email via FormSubmit (수신 주소는 화면에 표시되지 않음) */
+const FORM_ENDPOINT='https://formsubmit.co/ajax/'+atob('a3NoMzAwMDdAZ21haWwuY29t');
+const form=document.getElementById('inq'),msg=document.getElementById('msg'),btn=document.getElementById('sendBtn');
+form.addEventListener('submit',async ev=>{
+  ev.preventDefault();msg.className='msg';
+  const bad=[...form.querySelectorAll('[required]')].find(f=>!f.value.trim()||(f.type==='email'&&!/^\S+@\S+\.\S+$/.test(f.value)));
+  if(bad){msg.textContent=`'${bad.previousElementSibling.textContent.replace('*','').trim()}' 항목을 올바르게 입력해 주세요.`;msg.classList.add('err');bad.focus();return}
+  if(!document.getElementById('agree').checked){msg.textContent='개인정보 수집·이용에 동의해 주세요.';msg.classList.add('err');return}
+  const data=Object.fromEntries(new FormData(form));
+  data._subject=`[홈페이지 문의] ${data['골프장명']} - ${data['담당자']}`;
+  data._template='table';data._captcha='false';data._replyto=data.EMAIL;
+  btn.disabled=true;btn.textContent='전송 중...';
+  try{
+    const r=await fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||j.success==='false'||j.success===false)throw new Error(j.message||'fail');
+    msg.textContent='문의가 정상적으로 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.';msg.classList.add('ok');form.reset();
+  }catch(e){msg.textContent='전송에 실패했습니다. 잠시 후 다시 시도해 주세요.';msg.classList.add('err')}
+  finally{btn.disabled=false;btn.textContent='문의 보내기'}
+});
+</script>
+</body>
+</html>
